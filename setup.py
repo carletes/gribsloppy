@@ -14,6 +14,8 @@ setup(
     url="https://github.com/carletes/gribsloppy",
 
     packages=find_packages(),
-    install_requires=dependencies,
+    package_data={
+        "gribsloppy.test": ["*.grib1"],
+    },
     zip_safe=False,
 )

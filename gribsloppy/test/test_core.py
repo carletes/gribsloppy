@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from gribsloppy import GribFile
@@ -8,19 +9,24 @@ __all__ = [
 ]
 
 
+def grib_file_path(fname):
+    return os.path.join(os.path.dirname(__file__), fname)
+
+
 class GribFileTest(unittest.TestCase):
 
     def test_incorrect_usage(self):
-        g = GribFile("regular_latlon_surface.grib1")
+        fname = grib_file_path("regular_latlon_surface.grib1")
+        g = GribFile(fname)
 
         with self.assertRaises(Exception) as exc:
             g.get_long("Ni")
-        self.assertEqual("GRIB file regular_latlon_surface.grib1 not open",
+        self.assertEqual("GRIB file %s not open" % (fname,),
                          exc.exception.message)
 
         with self.assertRaises(Exception) as exc:
             g.get_double("latitudeOfFirstGridPointInDegrees")
-        self.assertEqual("GRIB file regular_latlon_surface.grib1 not open",
+        self.assertEqual("GRIB file %s not open" % (fname,),
                          exc.exception.message)
 
     def test_read_file(self):
@@ -29,7 +35,7 @@ class GribFileTest(unittest.TestCase):
         # This is pretty much like
         #
         #   http://ecmwf.int/publications/manuals/grib_api/get_8c-example.html
-        with GribFile("regular_latlon_surface.grib1") as g:
+        with GribFile(grib_file_path("regular_latlon_surface.grib1")) as g:
             self.assertEqual(16, g.get_long("Ni"))
             self.assertEqual(31, g.get_long("Nj"))
             self.assertEqual(60.0,
